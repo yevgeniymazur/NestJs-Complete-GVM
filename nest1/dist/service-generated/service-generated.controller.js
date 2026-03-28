@@ -17,8 +17,8 @@ let ServiceGeneratedController = class ServiceGeneratedController {
     constructor(serviceGeneratedService) {
         this.serviceGeneratedService = serviceGeneratedService;
     }
-    findAll() {
-        return this.serviceGeneratedService.getData();
+    getWarehouseView() {
+        return this.serviceGeneratedService.getWarehouseView();
     }
 };
 exports.ServiceGeneratedController = ServiceGeneratedController;
@@ -27,7 +27,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
-], ServiceGeneratedController.prototype, "findAll", null);
+], ServiceGeneratedController.prototype, "getWarehouseView", null);
 exports.ServiceGeneratedController = ServiceGeneratedController = __decorate([
     (0, common_1.Controller)('service-generated'),
     __metadata("design:paramtypes", [service_generated_service_1.ServiceGeneratedService])

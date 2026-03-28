@@ -1,47 +1,119 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Product Loader</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product View Selector</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 40px;
+      background: #f4f4f4;
+      color: #222;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
     }
 
     button {
       padding: 10px 16px;
+      font-size: 16px;
+      border: 1px solid #555;
+      border-radius: 6px;
+      background: #fff;
       cursor: pointer;
     }
 
-    pre {
-      margin-top: 20px;
-      background: #f4f4f4;
-      padding: 15px;
+    button:hover {
+      background: #e9e9e9;
+    }
+
+    #output {
+      background: #fff;
+      border: 1px solid #ccc;
       border-radius: 6px;
+      padding: 16px;
+      min-height: 250px;
+      white-space: pre-wrap;
       overflow-x: auto;
     }
   </style>
 </head>
 <body>
-  <h1>Product Loader</h1>
+  <h1>Product View Selector</h1>
 
-  <button onclick="loadData()">Load Products</button>
+  <div class="button-group">
+    <button onclick="loadCustomerView()">Load Customer View</button>
+    <button onclick="loadWarehouseView()">Load Warehouse View</button>
+    <button onclick="loadStreamView()">Load Stream View</button>
+  </div>
 
-  <pre id="output">Click the button to load data.</pre>
+  <div id="output">Click a button to load data.</div>
 
   <script>
-    function loadData() {
-      fetch("http://localhost:3000/file-generated")
+    let eventSource = null;
+    const API_BASE = "http://localhost";
+
+    function closeStream() {
+      if (eventSource) {
+        eventSource.close();
+        eventSource = null;
+      }
+    }
+
+    function loadCustomerView() {
+      closeStream();
+
+      fetch(`${API_BASE}/file-generated`)
         .then(response => response.json())
         .then(data => {
-          document.getElementById('output').textContent =
+          document.getElementById("output").textContent =
             JSON.stringify(data, null, 2);
         })
         .catch(error => {
-          document.getElementById('output').textContent =
-            'Error loading data: ' + error.message;
+          document.getElementById("output").textContent =
+            "Error loading customer view: " + error.message;
         });
+    }
+
+    function loadWarehouseView() {
+      closeStream();
+
+      fetch(`${API_BASE}/service-generated`)
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById("output").textContent =
+            JSON.stringify(data, null, 2);
+        })
+        .catch(error => {
+          document.getElementById("output").textContent =
+            "Error loading warehouse view: " + error.message;
+        });
+    }
+
+    function loadStreamView() {
+      closeStream();
+
+      const output = document.getElementById("output");
+      output.textContent = "Connecting to stream...\n";
+
+      eventSource = new EventSource(`${API_BASE}/stream`);
+
+      eventSource.onmessage = function(event) {
+        output.textContent += event.data + "\n\n";
+      };
+
+      eventSource.onerror = function() {
+        output.textContent += "Stream connection error or closed.\n";
+      };
     }
   </script>
 </body>

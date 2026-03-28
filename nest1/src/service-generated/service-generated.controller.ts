@@ -3,12 +3,12 @@ import { ServiceGeneratedService } from './service-generated.service';
 
 @Controller('service-generated')
 export class ServiceGeneratedController {
-
-  constructor(private readonly serviceGeneratedService: ServiceGeneratedService) {}
+  constructor(
+    private readonly serviceGeneratedService: ServiceGeneratedService,
+  ) {}
 
   @Get()
-  findAll() {
-    return this.serviceGeneratedService.getData();
+  getWarehouseView() {
+    return this.serviceGeneratedService.getWarehouseView();
   }
-
 }
